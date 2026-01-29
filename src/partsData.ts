@@ -4,206 +4,141 @@ export type PartSpec = {
   desc: string[];
 };
 
+// Saturn V–inspired (educational, simplified) parts list.
 export const PARTS: PartSpec[] = [
-  // Exterior
+  // Top / spacecraft
   {
-    id: 'nose_cone',
-    name: 'Nose Cone',
+    id: 'les',
+    name: 'Launch Escape System (LES)',
     desc: [
-      'Streamlined tip that reduces aerodynamic drag.',
-      'Often integrated with (or sits above) the payload fairing.'
+      'Solid rocket tower used to pull the crew capsule away in an emergency.',
+      'Jettisoned after leaving dense atmosphere.'
     ]
   },
   {
-    id: 'payload_fairing',
-    name: 'Payload Fairing',
+    id: 'command_module',
+    name: 'Command Module (CM)',
     desc: [
-      'Protects the payload during ascent through the atmosphere.',
-      'Typically jettisoned once outside dense air.'
+      'Crew capsule for re-entry and splashdown.',
+      'On Saturn V, sat at the very top under the escape tower.'
     ]
   },
   {
-    id: 'payload_adapter',
-    name: 'Payload Adapter',
+    id: 'service_module',
+    name: 'Service Module (SM)',
     desc: [
-      'Mechanical interface between payload and upper stage.',
-      'Provides mounting points and separation interface.'
-    ]
-  },
-  {
-    id: 'payload',
-    name: 'Payload (Demo)',
-    desc: [
-      'The spacecraft / satellite / cargo the rocket is delivering.',
-      'This is a simplified placeholder.'
-    ]
-  },
-  {
-    id: 'interstage',
-    name: 'Interstage',
-    desc: [
-      'Structural section between stages.',
-      'Houses separation hardware and routes loads between stages.'
-    ]
-  },
-  {
-    id: 'stage1_shell',
-    name: 'Stage 1 Airframe / Tank Shell',
-    desc: [
-      'Primary structural cylinder; often also forms the outer wall of propellant tanks.',
-      'In this model we treat it as the outer shell of Stage 1.'
-    ]
-  },
-  {
-    id: 'stage2_shell',
-    name: 'Stage 2 Airframe / Tank Shell',
-    desc: [
-      'Outer cylinder of the upper stage.',
-      'Houses propellant tanks, avionics, and upper stage engine mount.'
-    ]
-  },
-  {
-    id: 'fins',
-    name: 'Fins (Optional)',
-    desc: [
-      'Some rockets use aerodynamic fins for stability/control in atmosphere.',
-      'Not all vehicles have fins; this is a simplified visual.'
+      'Provided propulsion, power, and life-support consumables (Apollo-era concept).',
+      'This is a simplified placeholder cylinder.'
     ]
   },
 
-  // Internal tanks & structures (generic)
+  // Stages (outer shells)
   {
-    id: 'stage1_lox_tank',
-    name: 'Stage 1 LOX Tank',
+    id: 's_ivb_shell',
+    name: 'S-IVB (3rd Stage) — Outer Shell',
     desc: [
-      'Stores liquid oxygen (oxidizer) for Stage 1.',
-      'LOX + fuel are fed to engines through valves/lines.'
+      'Third stage used for Earth orbit insertion and translunar injection (TLI).',
+      'Single-engine stage (J-2 style in this simplified model).'
     ]
   },
   {
-    id: 'stage1_fuel_tank',
-    name: 'Stage 1 Fuel Tank',
+    id: 's_ii_shell',
+    name: 'S-II (2nd Stage) — Outer Shell',
     desc: [
-      'Stores liquid fuel (e.g., RP-1 or methane) for Stage 1.',
-      'Separated from LOX by a bulkhead/intertank structure.'
+      'Second stage, typically a 5-engine cluster (J-2 family in real Saturn V).',
+      'Provides high-altitude ascent after first-stage separation.'
     ]
   },
   {
-    id: 'common_bulkhead',
-    name: 'Common Bulkhead (Concept)',
+    id: 's_ic_shell',
+    name: 'S-IC (1st Stage) — Outer Shell',
     desc: [
-      'A shared wall between LOX and fuel tanks (used on some designs).',
-      'Reduces mass but adds thermal/structural complexity.'
-    ]
-  },
-  {
-    id: 'tank_domes',
-    name: 'Tank Domes',
-    desc: [
-      'Curved end-caps that close cylindrical tanks.',
-      'Domes efficiently handle internal pressure loads.'
-    ]
-  },
-  {
-    id: 'stage2_lox_tank',
-    name: 'Stage 2 LOX Tank',
-    desc: [
-      'Upper stage oxidizer tank.',
-      'Smaller volume than Stage 1; used for orbit insertion burns.'
-    ]
-  },
-  {
-    id: 'stage2_fuel_tank',
-    name: 'Stage 2 Fuel Tank',
-    desc: [
-      'Upper stage fuel tank.',
-      'Feeds the upper stage engine for precision maneuvers.'
+      'First stage used for liftoff, with a 5-engine cluster (F-1 in Saturn V).',
+      'Provides the majority of thrust at launch.'
     ]
   },
 
-  // Propulsion & feed system
+  // Interstages / structure
   {
-    id: 'engine_cluster',
-    name: 'Engine Cluster',
+    id: 'interstage_1_2',
+    name: 'Interstage (S-IC → S-II)',
     desc: [
-      'Main engines that produce thrust by expelling high-speed exhaust.',
-      'This model shows a simplified cluster.'
+      'Structural adapter between Stage 1 and Stage 2.',
+      'Houses separation hardware and provides stiffness.'
     ]
   },
   {
-    id: 'engine_turbopump',
-    name: 'Turbopump (Concept)',
+    id: 'interstage_2_3',
+    name: 'Interstage (S-II → S-IVB)',
     desc: [
-      'High-speed pumps that raise propellant pressure before combustion.',
-      'Driven by a turbine powered by hot gas (simplified here).' 
+      'Adapter between Stage 2 and Stage 3.',
+      'Simplified ring/segment in this model.'
     ]
   },
   {
-    id: 'engine_thrust_chamber',
-    name: 'Thrust Chamber & Nozzle',
+    id: 'instrument_unit',
+    name: 'Instrument Unit (IU)',
     desc: [
-      'Where propellants burn and expand through the nozzle to create thrust.',
-      'Nozzle shape affects efficiency at different altitudes.'
+      'Guidance and control ring (Saturn-era).',
+      'Housed avionics for navigation and flight control.'
+    ]
+  },
+
+  // Propulsion
+  {
+    id: 'stage1_engines',
+    name: 'Stage 1 Engine Cluster (F-1 style, simplified)',
+    desc: [
+      'Five large engines providing liftoff thrust.',
+      'This model shows simplified bells and a mount ring.'
     ]
   },
   {
-    id: 'gimbal_mount',
-    name: 'Gimbal Mount (Concept)',
+    id: 'stage2_engines',
+    name: 'Stage 2 Engines (J-2 style, simplified)',
     desc: [
-      'Allows the engine(s) to pivot for steering (thrust vector control).',
-      'Often controlled by hydraulic/electric actuators.'
+      'Five vacuum-optimized engines for the second stage (simplified).'
+    ]
+  },
+  {
+    id: 'stage3_engine',
+    name: 'Stage 3 Engine (J-2 style, simplified)',
+    desc: [
+      'Single vacuum engine for the third stage (simplified).'
+    ]
+  },
+
+  // Internals (generic “as much as possible” without going full CAD)
+  {
+    id: 'lox_tank',
+    name: 'LOX Tank (Concept)',
+    desc: [
+      'Liquid oxygen tank (oxidizer).',
+      'Real Saturn V had separate LOX/fuel tanks per stage.'
+    ]
+  },
+  {
+    id: 'fuel_tank',
+    name: 'Fuel Tank (Concept)',
+    desc: [
+      'Liquid fuel tank (e.g., RP-1 or LH2 depending on stage).',
+      'This model uses generic internal cylinders.'
     ]
   },
   {
     id: 'feed_lines',
     name: 'Feed Lines (Concept)',
     desc: [
-      'Piping that routes propellants from tanks to engines.',
-      'Includes valves, sensors, and insulation in real vehicles.'
-    ]
-  },
-
-  // Guidance / control / pressurization
-  {
-    id: 'avionics_bay',
-    name: 'Avionics Bay',
-    desc: [
-      'Computers, IMU, power distribution, and communications.',
-      'Runs guidance, navigation, and control (GNC).' 
-    ]
-  },
-  {
-    id: 'battery_pack',
-    name: 'Battery / Power',
-    desc: [
-      'Provides electrical power for avionics, valves, and actuators.',
-      'Some vehicles use batteries, others use fuel cells or generators.'
+      'Piping routing propellants from tanks to engines.',
+      'Includes valves/sensors/insulation on real vehicles.'
     ]
   },
   {
     id: 'pressurant_bottles',
-    name: 'Pressurant Bottles (COPVs)',
+    name: 'Pressurant Bottles (Concept)',
     desc: [
-      'High-pressure gas (e.g., helium) used to pressurize propellant tanks.',
-      'Maintains feed pressure as propellant drains.'
-    ]
-  },
-  {
-    id: 'rcs_thrusters',
-    name: 'RCS Thrusters (Concept)',
-    desc: [
-      'Small thrusters for attitude control, especially in space.',
-      'Often used by the upper stage for pointing and settling propellants.'
-    ]
-  },
-
-  // Separation
-  {
-    id: 'stage_separation',
-    name: 'Stage Separation System (Concept)',
-    desc: [
-      'Hardware that separates stages (clamps, pushers, pyros, or pneumatic systems).',
-      'This is simplified in the model.'
+      'High-pressure gas bottles used for tank pressurization.',
+      'Commonly helium in many designs.'
     ]
   }
 ];

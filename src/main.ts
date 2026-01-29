@@ -156,39 +156,29 @@ gui.add(state, 'cutaway', 0, 1, 0.01).name('Cutaway');
 
 // Simple explode view: offsets groups along Y
 const explodeOffsets = new Map<string, number>([
-  // propulsion
-  ['engine_cluster', 0],
-  ['engine_turbopump', 0],
-  ['engine_thrust_chamber', 0],
-  ['gimbal_mount', 0],
+  // engines
+  ['stage1_engines', 0],
+  ['stage2_engines', 0],
+  ['stage3_engine', 0],
+
+  // shells / structures
+  ['s_ic_shell', 0],
+  ['interstage_1_2', 0],
+  ['s_ii_shell', 0],
+  ['interstage_2_3', 0],
+  ['instrument_unit', 0],
+  ['s_ivb_shell', 0],
+
+  // spacecraft
+  ['service_module', 0],
+  ['command_module', 0],
+  ['les', 0],
+
+  // internals
+  ['lox_tank', 0],
+  ['fuel_tank', 0],
   ['feed_lines', 0],
-
-  // stage 1
-  ['stage1_shell', 0],
-  ['stage1_lox_tank', 0],
-  ['stage1_fuel_tank', 0],
-  ['tank_domes', 0],
-  ['common_bulkhead', 0],
-  ['pressurant_bottles', 0],
-
-  // separation / structure
-  ['stage_separation', 0],
-  ['interstage', 0],
-
-  // stage 2
-  ['stage2_shell', 0],
-  ['stage2_lox_tank', 0],
-  ['stage2_fuel_tank', 0],
-  ['avionics_bay', 0],
-  ['battery_pack', 0],
-  ['rcs_thrusters', 0],
-
-  // payload section
-  ['payload_adapter', 0],
-  ['payload_fairing', 0],
-  ['payload', 0],
-  ['nose_cone', 0],
-  ['fins', 0]
+  ['pressurant_bottles', 0]
 ]);
 
 function applyExplode(t: number) {
@@ -199,49 +189,54 @@ function applyExplode(t: number) {
 
     let k = 0;
     switch (id) {
-      case 'engine_cluster':
-      case 'engine_turbopump':
-      case 'engine_thrust_chamber':
-      case 'gimbal_mount':
-        k = -12;
+      // engines move down a bit
+      case 'stage1_engines':
+        k = -10;
         break;
-      case 'fins':
-        k = -3;
+      case 'stage2_engines':
+        k = -6;
         break;
-      case 'stage1_shell':
-      case 'stage1_lox_tank':
-      case 'stage1_fuel_tank':
-      case 'tank_domes':
-      case 'common_bulkhead':
-      case 'pressurant_bottles':
+      case 'stage3_engine':
+        k = -4;
+        break;
+
+      // stage 1 block
+      case 's_ic_shell':
+      case 'fuel_tank':
+      case 'lox_tank':
       case 'feed_lines':
+      case 'pressurant_bottles':
         k = 0;
         break;
-      case 'stage_separation':
-        k = 8;
-        break;
-      case 'interstage':
+
+      // stage 2 block
+      case 'interstage_1_2':
         k = 10;
         break;
-      case 'stage2_shell':
-      case 'stage2_lox_tank':
-      case 'stage2_fuel_tank':
-      case 'avionics_bay':
-      case 'battery_pack':
-      case 'rcs_thrusters':
+      case 's_ii_shell':
         k = 18;
         break;
-      case 'payload_adapter':
-        k = 30;
+
+      // stage 3 block
+      case 'interstage_2_3':
+        k = 28;
         break;
-      case 'payload_fairing':
-        k = 33;
+      case 'instrument_unit':
+        k = 34;
         break;
-      case 'payload':
-        k = 36;
+      case 's_ivb_shell':
+        k = 38;
         break;
-      case 'nose_cone':
-        k = 44;
+
+      // spacecraft
+      case 'service_module':
+        k = 52;
+        break;
+      case 'command_module':
+        k = 58;
+        break;
+      case 'les':
+        k = 66;
         break;
     }
 
@@ -269,10 +264,17 @@ function tick(now: number) {
     const mat = m.material;
     if (!(mat instanceof THREE.MeshStandardMaterial)) continue;
 
-    const isShell = id === 'stage1_shell' || id === 'stage2_shell' || id === 'payload_fairing' || id === 'nose_cone';
+    const isShell =
+      id === 's_ic_shell' ||
+      id === 's_ii_shell' ||
+      id === 's_ivb_shell' ||
+      id === 'interstage_1_2' ||
+      id === 'interstage_2_3' ||
+      id === 'instrument_unit';
+
     if (isShell) {
       mat.transparent = state.cutaway > 0;
-      mat.opacity = 1 - 0.82 * state.cutaway;
+      mat.opacity = 1 - 0.85 * state.cutaway;
     }
   }
 
