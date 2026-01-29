@@ -145,19 +145,46 @@ const state = {
   autoRotate: true,
   rotateSpeed: 0.35,
   explode: 0,
+  cutaway: 0.0
 };
 
 const gui = new GUI({ width: 320, title: 'Controls' });
 gui.add(state, 'autoRotate').name('Auto rotate');
 gui.add(state, 'rotateSpeed', 0, 2, 0.01).name('Rotate speed');
 gui.add(state, 'explode', 0, 1, 0.01).name('Explode view');
+gui.add(state, 'cutaway', 0, 1, 0.01).name('Cutaway');
 
 // Simple explode view: offsets groups along Y
 const explodeOffsets = new Map<string, number>([
+  // propulsion
   ['engine_cluster', 0],
-  ['stage1_tank', 0],
+  ['engine_turbopump', 0],
+  ['engine_thrust_chamber', 0],
+  ['gimbal_mount', 0],
+  ['feed_lines', 0],
+
+  // stage 1
+  ['stage1_shell', 0],
+  ['stage1_lox_tank', 0],
+  ['stage1_fuel_tank', 0],
+  ['tank_domes', 0],
+  ['common_bulkhead', 0],
+  ['pressurant_bottles', 0],
+
+  // separation / structure
+  ['stage_separation', 0],
   ['interstage', 0],
-  ['stage2_tank', 0],
+
+  // stage 2
+  ['stage2_shell', 0],
+  ['stage2_lox_tank', 0],
+  ['stage2_fuel_tank', 0],
+  ['avionics_bay', 0],
+  ['battery_pack', 0],
+  ['rcs_thrusters', 0],
+
+  // payload section
+  ['payload_adapter', 0],
   ['payload_fairing', 0],
   ['payload', 0],
   ['nose_cone', 0],
@@ -172,14 +199,50 @@ function applyExplode(t: number) {
 
     let k = 0;
     switch (id) {
-      case 'engine_cluster': k = -10; break;
-      case 'fins': k = -3; break;
-      case 'stage1_tank': k = 0; break;
-      case 'interstage': k = 8; break;
-      case 'stage2_tank': k = 18; break;
-      case 'payload_fairing': k = 28; break;
-      case 'payload': k = 32; break;
-      case 'nose_cone': k = 40; break;
+      case 'engine_cluster':
+      case 'engine_turbopump':
+      case 'engine_thrust_chamber':
+      case 'gimbal_mount':
+        k = -12;
+        break;
+      case 'fins':
+        k = -3;
+        break;
+      case 'stage1_shell':
+      case 'stage1_lox_tank':
+      case 'stage1_fuel_tank':
+      case 'tank_domes':
+      case 'common_bulkhead':
+      case 'pressurant_bottles':
+      case 'feed_lines':
+        k = 0;
+        break;
+      case 'stage_separation':
+        k = 8;
+        break;
+      case 'interstage':
+        k = 10;
+        break;
+      case 'stage2_shell':
+      case 'stage2_lox_tank':
+      case 'stage2_fuel_tank':
+      case 'avionics_bay':
+      case 'battery_pack':
+      case 'rcs_thrusters':
+        k = 18;
+        break;
+      case 'payload_adapter':
+        k = 30;
+        break;
+      case 'payload_fairing':
+        k = 33;
+        break;
+      case 'payload':
+        k = 36;
+        break;
+      case 'nose_cone':
+        k = 44;
+        break;
     }
 
     // store base pos once
@@ -199,6 +262,19 @@ function tick(now: number) {
   }
 
   applyExplode(state.explode);
+
+  // Cutaway: make exterior shells more transparent to reveal internals
+  for (const m of rocket.meshes) {
+    const id = (m.userData.partId as string) || m.name;
+    const mat = m.material;
+    if (!(mat instanceof THREE.MeshStandardMaterial)) continue;
+
+    const isShell = id === 'stage1_shell' || id === 'stage2_shell' || id === 'payload_fairing' || id === 'nose_cone';
+    if (isShell) {
+      mat.transparent = state.cutaway > 0;
+      mat.opacity = 1 - 0.82 * state.cutaway;
+    }
+  }
 
   controls.update();
   renderer.render(scene, camera);
