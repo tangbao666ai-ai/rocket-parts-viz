@@ -87,17 +87,19 @@ type FlowPath = {
   color: number;
   curve: THREE.CatmullRomCurve3;
   points: THREE.Points;
+  line: THREE.Line;
   speed: number;
 };
 
-function makeFlowPoints(curve: THREE.CatmullRomCurve3, color: number) {
-  const N = 120;
+function makeFlowViz(curve: THREE.CatmullRomCurve3, color: number) {
+  // Dots
+  const N = 140;
   const geom = new THREE.BufferGeometry();
   const pos = new Float32Array(N * 3);
   geom.setAttribute('position', new THREE.BufferAttribute(pos, 3));
   const mat = new THREE.PointsMaterial({
     color,
-    size: 4.0,
+    size: 6.0,
     sizeAttenuation: false,
     transparent: true,
     opacity: 0.95,
@@ -107,7 +109,20 @@ function makeFlowPoints(curve: THREE.CatmullRomCurve3, color: number) {
   });
   const pts = new THREE.Points(geom, mat);
   pts.frustumCulled = false;
-  return { pts, N, pos };
+
+  // Path line (always helpful as a fallback if dots are hard to see)
+  const lineGeom = new THREE.BufferGeometry().setFromPoints(curve.getPoints(80));
+  const lineMat = new THREE.LineBasicMaterial({
+    color,
+    transparent: true,
+    opacity: 0.55,
+    depthWrite: false,
+    depthTest: false
+  });
+  const line = new THREE.Line(lineGeom, lineMat);
+  line.frustumCulled = false;
+
+  return { pts, line, N, pos };
 }
 
 // Build a few representative curves in model space.
@@ -133,10 +148,12 @@ const flowPaths: FlowPath[] = [];
     ['s1_lox', s1_lox, 0x7fd0ff, 0.35],
     ['s1_fuel', s1_fuel, 0xffb86b, 0.35]
   ] as const) {
-    const { pts, N, pos } = makeFlowPoints(curve, color);
+    const { pts, line, N, pos } = makeFlowViz(curve, color);
     pts.visible = false;
+    line.visible = false;
+    rocket.root.add(line);
     rocket.root.add(pts);
-    flowPaths.push({ stage: 'S-IC', id, color, curve, points: pts, speed });
+    flowPaths.push({ stage: 'S-IC', id, color, curve, points: pts, line, speed });
     // stash buffer for updates
     (pts.userData as any).N = N;
     (pts.userData as any).pos = pos;
@@ -160,10 +177,12 @@ const flowPaths: FlowPath[] = [];
     ['s2_lox', s2_lox, 0x7fd0ff, 0.28],
     ['s2_fuel', s2_fuel, 0xd7ddff, 0.28]
   ] as const) {
-    const { pts, N, pos } = makeFlowPoints(curve, color);
+    const { pts, line, N, pos } = makeFlowViz(curve, color);
     pts.visible = false;
+    line.visible = false;
+    rocket.root.add(line);
     rocket.root.add(pts);
-    flowPaths.push({ stage: 'S-II', id, color, curve, points: pts, speed });
+    flowPaths.push({ stage: 'S-II', id, color, curve, points: pts, line, speed });
     (pts.userData as any).N = N;
     (pts.userData as any).pos = pos;
   }
@@ -186,10 +205,12 @@ const flowPaths: FlowPath[] = [];
     ['s3_lox', s3_lox, 0x7fd0ff, 0.22],
     ['s3_fuel', s3_fuel, 0xd7ddff, 0.22]
   ] as const) {
-    const { pts, N, pos } = makeFlowPoints(curve, color);
+    const { pts, line, N, pos } = makeFlowViz(curve, color);
     pts.visible = false;
+    line.visible = false;
+    rocket.root.add(line);
     rocket.root.add(pts);
-    flowPaths.push({ stage: 'S-IVB', id, color, curve, points: pts, speed });
+    flowPaths.push({ stage: 'S-IVB', id, color, curve, points: pts, line, speed });
     (pts.userData as any).N = N;
     (pts.userData as any).pos = pos;
   }
@@ -446,6 +467,7 @@ function tick(now: number) {
   for (const fp of flowPaths) {
     const active = state.flow && fp.stage === state.activeStage;
     fp.points.visible = active;
+    fp.line.visible = active;
     if (!active) continue;
 
     const N = (fp.points.userData as any).N as number;
