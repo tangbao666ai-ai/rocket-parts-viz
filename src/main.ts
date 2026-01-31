@@ -97,10 +97,11 @@ function makeFlowPoints(curve: THREE.CatmullRomCurve3, color: number) {
   geom.setAttribute('position', new THREE.BufferAttribute(pos, 3));
   const mat = new THREE.PointsMaterial({
     color,
-    size: 0.35,
+    size: 0.6,
     transparent: true,
-    opacity: 0.85,
-    depthWrite: false
+    opacity: 0.9,
+    depthWrite: false,
+    depthTest: false
   });
   const pts = new THREE.Points(geom, mat);
   pts.frustumCulled = false;
