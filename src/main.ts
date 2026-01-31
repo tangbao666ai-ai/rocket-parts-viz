@@ -97,11 +97,13 @@ function makeFlowPoints(curve: THREE.CatmullRomCurve3, color: number) {
   geom.setAttribute('position', new THREE.BufferAttribute(pos, 3));
   const mat = new THREE.PointsMaterial({
     color,
-    size: 0.6,
+    size: 4.0,
+    sizeAttenuation: false,
     transparent: true,
-    opacity: 0.9,
+    opacity: 0.95,
     depthWrite: false,
-    depthTest: false
+    depthTest: false,
+    blending: THREE.AdditiveBlending
   });
   const pts = new THREE.Points(geom, mat);
   pts.frustumCulled = false;
@@ -133,7 +135,7 @@ const flowPaths: FlowPath[] = [];
   ] as const) {
     const { pts, N, pos } = makeFlowPoints(curve, color);
     pts.visible = false;
-    scene.add(pts);
+    rocket.root.add(pts);
     flowPaths.push({ stage: 'S-IC', id, color, curve, points: pts, speed });
     // stash buffer for updates
     (pts.userData as any).N = N;
@@ -160,7 +162,7 @@ const flowPaths: FlowPath[] = [];
   ] as const) {
     const { pts, N, pos } = makeFlowPoints(curve, color);
     pts.visible = false;
-    scene.add(pts);
+    rocket.root.add(pts);
     flowPaths.push({ stage: 'S-II', id, color, curve, points: pts, speed });
     (pts.userData as any).N = N;
     (pts.userData as any).pos = pos;
@@ -186,7 +188,7 @@ const flowPaths: FlowPath[] = [];
   ] as const) {
     const { pts, N, pos } = makeFlowPoints(curve, color);
     pts.visible = false;
-    scene.add(pts);
+    rocket.root.add(pts);
     flowPaths.push({ stage: 'S-IVB', id, color, curve, points: pts, speed });
     (pts.userData as any).N = N;
     (pts.userData as any).pos = pos;

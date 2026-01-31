@@ -18,7 +18,13 @@ function tag(mesh: THREE.Mesh, id: string) {
 }
 
 function addBand(root: THREE.Object3D, meshes: THREE.Mesh[], r: number, y: number, h: number, color: number, id: string) {
-  const band = tag(new THREE.Mesh(new THREE.CylinderGeometry(r * 1.001, r * 1.001, h, 64, 1), stdMat(color)), id);
+  // Use polygonOffset to avoid z-fighting with the stage shell.
+  const mat = stdMat(color);
+  mat.polygonOffset = true;
+  mat.polygonOffsetFactor = -2;
+  mat.polygonOffsetUnits = -2;
+
+  const band = tag(new THREE.Mesh(new THREE.CylinderGeometry(r * 1.003, r * 1.003, h, 64, 1), mat), id);
   band.position.y = y;
   root.add(band);
   meshes.push(band);
